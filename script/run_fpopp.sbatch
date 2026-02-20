@@ -13,6 +13,18 @@ conda activate reinflow
 
 cd ~/ReinFlow
 
+export REINFLOW_WANDB_ENTITY="katef-study”
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco210/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
+export PATH="$LD_LIBRARY_PATH:$PATH"
+
+echo
+echo  # # # # # USING SREEHARSHA'S WANDB API KEY # # #  # #
+echo
+
+export WANDB_API_KEY="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"
+
 export REINFLOW_DIR="$HOME/ReinFlow"
 export REINFLOW_DATA_DIR="$HOME/ReinFlow/data"
 export REINFLOW_LOG_DIR="$HOME/ReinFlow/log"
