@@ -568,5 +568,24 @@ class TrainPPOAgent(TrainAgent):
                         step=self.itr,
                         commit=True,
                     )
+            if (self.render_video
+                    and self.use_wandb
+                    and self.itr % self.render_freq == 0):
+                for env_ind in range(self.n_render):
+                    video_path = os.path.join(
+                        self.render_dir,
+                        f"itr-{self.itr}_trial-{env_ind}.mp4",
+                    )
+                    if os.path.exists(video_path):
+                        prefix = "eval" if self.eval_mode else "train"
+                        wandb.log(
+                            {f"{prefix}/video_trial{env_ind}": wandb.Video(
+                                video_path, fps=30, format="mp4",
+                            )},
+                            step=self.itr,
+                            commit=False,
+                        )
+                        log.info(f"Uploaded video to W&B: {video_path}")
+
             with open(self.result_path, "wb") as f:
                 pickle.dump(self.run_results, f)

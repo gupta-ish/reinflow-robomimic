@@ -22,6 +22,7 @@ checkpoints/
 out/
 outputs/
 err/
+slurm_logs/
 # final_experiments_record/
 *.pkl
 # *.sh
