@@ -3,7 +3,7 @@
 #SBATCH --partition=general
 #SBATCH --gres=gpu:1
 #SBATCH --time=24:00:00
-#SBATCH --mem=25G
+#SBATCH --mem=80G
 #SBATCH --output=slurm-%j.out
 #SBATCH --error=slurm-%j.err
 

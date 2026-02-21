@@ -160,7 +160,7 @@ model:
   clip_ploss_coef: 0.01
   clip_vloss_coef: null
   use_aspo: false                    # Paper Section D.5: disable for manipulation
-  cfm_loss_clamp: 100.0
+  cfm_loss_clamp: 5.0
   cfm_diff_clamp: 5.0
   denoised_clip_value: 1.0
   ################################################

@@ -186,8 +186,11 @@ class FPOPPFlow(nn.Module):
         v_pred = actor(a_noised_flat, taus_flat, cond_expanded)  # (B*N_mc, Ta, Da)
         v_pred = v_pred.reshape(B, N_mc, Ta, Da)
 
-        # Per-sample CFM loss: ||v_hat - (a_t - epsilon)||^2, summed over (Ta, Da)  (Eq. 8)
-        cfm_losses = ((v_pred - v_target) ** 2).sum(dim=(-2, -1))  # (B, N_mc)
+        # Per-sample CFM loss: ||v_hat - (a_t - epsilon)||^2, mean over (Ta, Da)  (Eq. 8)
+        # Mean (not sum) keeps the scale consistent with target_kl and cfm_diff_clamp
+        # hyperparameters; with sum the approx_kl proxy is 28x too large, causing
+        # early stopping before grad_accumulate=15 is ever satisfied.
+        cfm_losses = ((v_pred - v_target) ** 2).mean(dim=(-2, -1))  # (B, N_mc)
 
         # Clamp for numerical stability
         if self.cfm_loss_clamp > 0:
