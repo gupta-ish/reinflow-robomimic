@@ -25,6 +25,10 @@
 Launcher for all experiments. Download pre-training data, normalization statistics, and pre-trained checkpoints if needed.
 Revised by ReinFlow Authors to accomodate resume training and fixing the kitchen tasks import error.
 """
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # clear python cache automatically.
 from util.clear_pycache import clean_pycache
 from util.dirs import REINFLOW_DIR
@@ -37,8 +41,6 @@ import d4rl.gym_mujoco
 import gc
 gc.collect()
 
-import os
-import sys
 import logging
 import math
 import hydra
