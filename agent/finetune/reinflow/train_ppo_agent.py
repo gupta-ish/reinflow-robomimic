@@ -197,6 +197,13 @@ class TrainPPOAgent(TrainAgent):
         self.skip_initial_eval = False 
         
     def visualize_lr(self, cfg):
+        import copy
+        # Snapshot scheduler + optimizer state so the preview loop doesn't corrupt training
+        actor_sched_state = copy.deepcopy(self.actor_lr_scheduler.state_dict())
+        critic_sched_state = copy.deepcopy(self.critic_lr_scheduler.state_dict())
+        actor_opt_state = copy.deepcopy(self.actor_optimizer.state_dict())
+        critic_opt_state = copy.deepcopy(self.critic_optimizer.state_dict())
+
         steps = []
         critic_lrs = []
         actor_lrs = []
@@ -217,11 +224,12 @@ class TrainPPOAgent(TrainAgent):
         plt.savefig(lr_save_path)
         log.info(f"learning rate saved to {lr_save_path}")
         plt.close()
-        
-        if isinstance(self.actor_lr_scheduler, CustomScheduler):
-            self.actor_lr_scheduler.reset()
-        if isinstance(self.critic_lr_scheduler, CustomScheduler):
-            self.critic_lr_scheduler.reset()
+
+        # Restore all schedulers and optimizers to their pre-preview state
+        self.actor_lr_scheduler.load_state_dict(actor_sched_state)
+        self.critic_lr_scheduler.load_state_dict(critic_sched_state)
+        self.actor_optimizer.load_state_dict(actor_opt_state)
+        self.critic_optimizer.load_state_dict(critic_opt_state)
         
         self.print_architecture()
     
@@ -512,7 +520,7 @@ class TrainPPOAgent(TrainAgent):
                     wandb.log(
                         data=eval_dict,
                         step=self.itr,
-                        commit=False,
+                        commit=True,
                     )
                 
                 if self.current_best_reward < self.buffer.avg_episode_reward:
